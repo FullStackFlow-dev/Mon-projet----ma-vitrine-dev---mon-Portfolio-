@@ -1,0 +1,838 @@
+#  EXPLICATIONS COMPLÈTES - FICHIER CSS (style.css)
+
+##  Table des Matières
+
+1. [Variables CSS](#variables-css)
+2. [Reset CSS](#reset-css)
+3. [Styles Généraux](#styles-généraux)
+4. [Conteneur Principal](#conteneur-principal)
+5. [Sections](#sections)
+6. [Header/Navigation](#header-navigation)
+7. [Section Hero](#section-hero)
+8. [Boutons](#boutons)
+9. [Sections Contenu](#sections-contenu)
+10. [Footer](#footer)
+11. [Responsive Design](#responsive-design)
+12. [Animations](#animations)
+
+---
+
+## 1. VARIABLES CSS (:root)
+
+### Qu'est-ce qu'une variable CSS ?
+```css
+:root {
+  --primary-color: #6366f1;
+}
+```
+**Explication :**
+- **:root** = élément racine du document (plus haut niveau)
+- **--primary-color** = variable personnalisée (commence toujours par `--`)
+- **Utilisation** : `color: var(--primary-color);`
+- **Avantages** :
+  - Changer une couleur partout en modifiant une seule ligne
+  - Code plus lisible et maintenable
+  - Évite les erreurs de frappe
+
+### Exemple pratique
+```css
+/* Définition */
+:root {
+  --primary-color: #6366f1;
+}
+
+/* Utilisation */
+.btn {
+  background-color: var(--primary-color);
+}
+
+.link {
+  color: var(--primary-color);
+}
+```
+Si vous voulez changer le violet en bleu, changez juste la définition !
+
+---
+
+## 2. RESET CSS
+
+### Sélecteur universel `*`
+```css
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+```
+**Explication ligne par ligne :**
+- **`*`** = sélecteur universel (cible TOUS les éléments)
+- **margin: 0** = enlève toutes les marges par défaut
+  - Navigateurs ajoutent des marges automatiques (h1, p, body...)
+  - On les enlève pour contrôler nous-mêmes l'espacement
+- **padding: 0** = enlève tous les paddings par défaut
+- **box-sizing: border-box** = change le calcul de la largeur
+
+### Box-sizing expliqué
+```css
+/* SANS box-sizing: border-box */
+.box {
+  width: 100px;
+  padding: 10px;
+  border: 5px solid black;
+}
+/* Largeur totale = 100 + 10 + 10 + 5 + 5 = 130px */
+
+/* AVEC box-sizing: border-box */
+.box {
+  width: 100px;
+  padding: 10px;
+  border: 5px solid black;
+  box-sizing: border-box;
+}
+/* Largeur totale = 100px (padding et border inclus) */
+```
+
+---
+
+## 3. STYLES GÉNÉRAUX
+
+### `html`
+```css
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+```
+**Explication :**
+- **scroll-behavior: smooth** = défilement fluide lors des clics sur les ancres
+  - Exemple : clic sur "Contact" → scroll doux vers la section
+  - Sans : saut instantané
+- **font-size: 16px** = taille de base pour calculer les `rem`
+  - 1rem = 16px
+  - 2rem = 32px
+  - 0.5rem = 8px
+
+### `body`
+```css
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+```
+**Explication :**
+- **font-family** = police de caractères (avec fallbacks)
+  - Le navigateur essaie 'Segoe UI'
+  - Si indisponible → essaie Tahoma
+  - Puis Geneva, Verdana
+  - En dernier recours → police sans-serif du système
+- **line-height: 1.6** = hauteur de ligne (espace entre les lignes)
+  - 1.6 = 160% de la taille du texte
+  - Améliore la lisibilité
+- **overflow-x: hidden** = cache le scroll horizontal
+  - Empêche la barre de défilement horizontale
+  - Utile pour les animations qui dépassent
+
+---
+
+### Pseudo-élément `::selection`
+```css
+::selection {
+  background-color: var(--primary-color);
+  color: white;
+}
+```
+**Explication :**
+- **::selection** = style du texte sélectionné (surligné)
+- Par défaut : bleu clair
+- Ici : violet avec texte blanc
+- Ajoute une touche personnalisée au site
+
+---
+
+## 4. CONTENEUR PRINCIPAL
+
+### `.container`
+```css
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-sm);
+  width: 100%;
+}
+```
+**Explication :**
+- **max-width: 1200px** = largeur maximale du contenu
+  - Sur grand écran : bloque à 1200px
+  - Sur petit écran : s'adapte (100%)
+- **margin: 0 auto** = centre horizontalement
+  - **0** = pas de marge haut/bas
+  - **auto** = marge gauche/droite automatique (centre)
+- **padding: 0 16px** = espace sur les côtés
+  - Empêche le contenu de toucher les bords
+- **width: 100%** = prend toute la largeur disponible
+
+### Pourquoi 0 auto centre ?
+```
+┌─────────────────────────────────┐
+│  [auto]  CONTENU  [auto]        │ ← Marges automatiques = égales
+└─────────────────────────────────┘
+```
+
+---
+
+## 5. SECTIONS
+
+### `.section`
+```css
+.section {
+  padding: var(--spacing-xl) 0;
+  min-height: auto;
+}
+```
+**Explication :**
+- **padding: 6rem 0** = espace haut/bas de 96px, gauche/droite 0
+- **min-height: auto** = hauteur minimum automatique
+- Crée de l'espace entre chaque section
+
+---
+
+### `.section__title::after`
+```css
+.section__title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+  border-radius: 2px;
+}
+```
+**Explication ligne par ligne :**
+- **::after** = pseudo-élément (crée un élément virtuel après le contenu)
+- **content: ''** = contenu vide (obligatoire pour ::after)
+- **position: absolute** = positionnement absolu (sort du flux)
+- **bottom: 0** = colle en bas du titre
+- **left: 50%** = commence au milieu
+- **transform: translateX(-50%)** = recentre parfaitement
+  - left: 50% + translateX(-50%) = centre parfait
+- **linear-gradient** = dégradé de couleurs
+  - 90deg = horizontal (gauche → droite)
+  - De violet à rose
+
+### Pourquoi translateX(-50%) ?
+```
+Sans transform:
+├─────────┼─────────┤
+          ▼
+      ┌───────┐       ← Commence au centre (pas centré)
+
+Avec translateX(-50%):
+├─────────┼─────────┤
+      ┌───▼───┐       ← Centré parfaitement
+```
+
+---
+
+## 6. HEADER / NAVIGATION
+
+### `position: fixed`
+```css
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+```
+**Explication :**
+- **position: fixed** = reste fixe même au scroll
+  - Ne suit pas le défilement de la page
+  - Reste toujours visible en haut
+- **top: 0, left: 0** = colle en haut à gauche
+- **width: 100%** = prend toute la largeur
+- **z-index: 1000** = apparaît au-dessus de tout
+  - Plus le z-index est élevé, plus l'élément est "devant"
+  - 1000 garantit que le header est au-dessus du contenu
+
+---
+
+### `backdrop-filter`
+```css
+.header {
+  backdrop-filter: blur(10px);
+}
+```
+**Explication :**
+- **backdrop-filter** = filtre appliqué à l'arrière-plan
+- **blur(10px)** = floute le contenu derrière le header
+- Effet moderne "glassmorphism" (verre dépoli)
+- Fonctionne avec `background-color` transparent
+
+---
+
+### Flexbox
+```css
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+```
+**Explication :**
+- **display: flex** = active Flexbox (disposition flexible)
+- **justify-content: space-between** = espace maximal entre les éléments
+  ```
+  [Logo]                    [Menu]
+  ├─────────────────────────┤
+  ```
+- **align-items: center** = centre verticalement
+  ```
+  ┌─────────────────────────┐
+  │     [Logo]    [Menu]    │ ← Centrés verticalement
+  └─────────────────────────┘
+  ```
+
+---
+
+### Transitions
+```css
+.nav__link {
+  transition: var(--transition-fast);
+}
+
+.nav__link:hover {
+  color: var(--primary-color);
+}
+```
+**Explication :**
+- **transition** = animation fluide entre deux états
+- **var(--transition-fast)** = 0.2s ease
+  - 0.2s = durée de l'animation
+  - ease = courbe d'accélération (lent → rapide → lent)
+- **:hover** = quand la souris survole
+- Sans transition : changement instantané (dur)
+- Avec : changement progressif (doux)
+
+---
+
+## 7. SECTION HERO
+
+### `min-height: 100vh`
+```css
+.hero {
+  min-height: 100vh;
+}
+```
+**Explication :**
+- **100vh** = 100% de la hauteur du viewport (écran visible)
+- **vh** = viewport height (unité relative)
+  - 100vh = hauteur totale de l'écran
+  - 50vh = moitié de l'écran
+- La section prend toute la hauteur, peu importe la taille d'écran
+
+---
+
+### Pseudo-élément animé
+```css
+.hero::before {
+  content: '';
+  position: absolute;
+  animation: float 6s ease-in-out infinite;
+}
+```
+**Explication :**
+- **::before** = élément virtuel avant le contenu
+- **animation: float 6s ease-in-out infinite**
+  - **float** = nom de l'animation (définie avec @keyframes)
+  - **6s** = durée (6 secondes)
+  - **ease-in-out** = accélération douce
+  - **infinite** = boucle infinie
+
+---
+
+### @keyframes
+```css
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+```
+**Explication :**
+- **@keyframes** = définit les étapes d'une animation
+- **0%** = début de l'animation
+- **50%** = milieu de l'animation
+- **100%** = fin de l'animation
+- **translateY(-20px)** = monte de 20px
+- Crée un effet de flottement (haut-bas-haut)
+
+---
+
+### `object-fit: cover`
+```css
+.hero__img {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+```
+**Explication :**
+- **object-fit: cover** = remplit l'espace en gardant les proportions
+  - Coupe ce qui dépasse
+  - L'image remplit complètement le conteneur
+- **Alternatives** :
+  - `contain` = montre toute l'image (peut laisser des espaces vides)
+  - `fill` = étire l'image (déforme)
+- **border-radius: 50%** = cercle parfait
+
+---
+
+## 8. BOUTONS
+
+### Dégradé linéaire
+```css
+.btn--primary {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+```
+**Explication :**
+- **linear-gradient** = dégradé linéaire
+- **135deg** = angle du dégradé (diagonal)
+  - 0deg = bas → haut
+  - 90deg = gauche → droite
+  - 135deg = coin bas-gauche → coin haut-droite
+  - 180deg = haut → bas
+- Deux couleurs : violet → violet clair
+
+---
+
+### Transform
+```css
+.btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+```
+**Explication :**
+- **transform: translateY(-2px)** = déplace de 2px vers le haut
+  - Y = axe vertical
+  - Valeur négative = vers le haut
+  - Valeur positive = vers le bas
+- **box-shadow** = ombre plus grande au survol
+- Crée un effet de "levitation"
+
+---
+
+## 9. GRILLES CSS
+
+### Grid Layout
+```css
+.about__content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--spacing-lg);
+}
+```
+**Explication :**
+- **display: grid** = active CSS Grid
+- **grid-template-columns: 2fr 1fr** = 2 colonnes
+  - **2fr** = colonne 1 prend 2 parts (66%)
+  - **1fr** = colonne 2 prend 1 part (33%)
+  - **fr** = fraction (unité flexible)
+  ```
+  ┌──────────────┬──────┐
+  │   2fr (66%)  │ 1fr  │
+  └──────────────┴──────┘
+  ```
+- **gap: 4rem** = espace entre les colonnes
+
+---
+
+### Grid auto-fit
+```css
+.projects__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--spacing-md);
+}
+```
+**Explication :**
+- **repeat()** = répète un motif
+- **auto-fill** = crée autant de colonnes que possible
+- **minmax(320px, 1fr)** = largeur min 320px, max 1fr
+  - Si espace suffisant : ajoute une colonne
+  - Si pas assez : passe à la ligne
+- **Responsive automatique** sans media queries !
+
+Exemple :
+```
+Large écran:
+┌──────┬──────┬──────┐
+│ Card │ Card │ Card │
+└──────┴──────┴──────┘
+
+Petit écran:
+┌──────┐
+│ Card │
+├──────┤
+│ Card │
+└──────┘
+```
+
+---
+
+## 10. POSITIONNEMENT
+
+### `position: relative`
+```css
+.project-card__img-container {
+  position: relative;
+}
+```
+**Explication :**
+- **position: relative** = point de référence pour les enfants absolus
+- Ne déplace pas l'élément lui-même
+- Permet aux enfants avec `position: absolute` de se positionner par rapport à ce conteneur
+
+---
+
+### `position: absolute`
+```css
+.project-card__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+```
+**Explication :**
+- **position: absolute** = sort du flux normal
+- Se positionne par rapport au parent `relative` le plus proche
+- **top: 0, left: 0** = colle en haut à gauche
+- **width/height: 100%** = recouvre complètement le parent
+- Utilisé pour l'overlay (couche au-dessus de l'image)
+
+---
+
+## 11. OPACITÉ ET VISIBILITÉ
+
+### Opacity
+```css
+.project-card__overlay {
+  opacity: 0;
+  transition: var(--transition-normal);
+}
+
+.project-card:hover .project-card__overlay {
+  opacity: 1;
+}
+```
+**Explication :**
+- **opacity: 0** = invisible (mais l'élément existe)
+- **opacity: 1** = visible à 100%
+- **opacity: 0.5** = semi-transparent (50%)
+- **transition** = animation fluide entre 0 et 1
+- Au survol : l'overlay devient visible progressivement
+
+---
+
+### pointer-events
+```css
+.scroll-top {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.scroll-top--visible {
+  opacity: 1;
+  pointer-events: all;
+}
+```
+**Explication :**
+- **pointer-events: none** = élément non cliquable
+  - Même si visible, on ne peut pas cliquer dessus
+  - Les clics passent "à travers"
+- **pointer-events: all** = cliquable normalement
+- Utile avec opacity pour vraiment désactiver un élément
+
+---
+
+## 12. RESPONSIVE DESIGN
+
+### Media Queries
+```css
+@media screen and (max-width: 768px) {
+  /* Styles pour écrans ≤ 768px */
+}
+```
+**Explication :**
+- **@media** = règle conditionnelle
+- **screen** = pour les écrans (pas pour l'impression)
+- **max-width: 768px** = si la largeur est 768px ou moins
+- **768px** = point de rupture (breakpoint) tablette
+- Tout le CSS à l'intérieur s'applique uniquement sur petits écrans
+
+---
+
+### Breakpoints courants
+```css
+/* Mobile */
+@media (max-width: 480px) { }
+
+/* Tablette */
+@media (max-width: 768px) { }
+
+/* Desktop */
+@media (min-width: 1024px) { }
+```
+
+---
+
+### Flexbox responsive
+```css
+.hero__buttons {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .hero__buttons {
+    flex-direction: column;
+  }
+}
+```
+**Explication :**
+- **Desktop** : boutons côte à côte (row)
+- **Mobile** : boutons empilés (column)
+- **flex-wrap: wrap** = passe à la ligne si nécessaire
+
+---
+
+## 13. PSEUDO-CLASSES
+
+### `:hover`
+```css
+.btn:hover {
+  transform: translateY(-2px);
+}
+```
+**Explication :**
+- S'applique quand la souris survole l'élément
+- Uniquement sur desktop (pas sur mobile/tactile)
+
+---
+
+### `:focus`
+```css
+input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+```
+**Explication :**
+- S'applique quand l'élément est actif (cliqué ou sélectionné au clavier)
+- **outline: none** = enlève la bordure bleue par défaut
+- **Important** : toujours remplacer par un style visible (accessibilité)
+
+---
+
+### `:nth-child()`
+```css
+.nav__toggle--active .nav__toggle-icon:nth-child(2) {
+  opacity: 0;
+}
+```
+**Explication :**
+- **:nth-child(2)** = le 2ème enfant
+- Cache la barre du milieu du menu hamburger
+- **Autres exemples** :
+  - `:nth-child(odd)` = éléments impairs (1, 3, 5...)
+  - `:nth-child(even)` = éléments pairs (2, 4, 6...)
+  - `:nth-child(3n)` = tous les 3 éléments (3, 6, 9...)
+
+---
+
+### `:last-child`
+```css
+.about__item:last-child {
+  border-bottom: none;
+}
+```
+**Explication :**
+- S'applique au dernier enfant
+- Ici : enlève la bordure du dernier élément de liste
+- **:first-child** = premier enfant
+
+---
+
+## 14. UNITÉS CSS
+
+### px (pixels)
+```css
+width: 200px;
+```
+- Taille fixe, ne change pas
+- Précis mais pas flexible
+
+---
+
+### rem (root em)
+```css
+font-size: 1.5rem; /* 24px si html = 16px */
+```
+- Relatif à la taille de base (html)
+- 1rem = 16px (par défaut)
+- **Avantages** :
+  - S'adapte si l'utilisateur change la taille de texte
+  - Accessibilité améliorée
+
+---
+
+### % (pourcentage)
+```css
+width: 50%; /* 50% du parent */
+```
+- Relatif à l'élément parent
+- S'adapte dynamiquement
+
+---
+
+### vh / vw (viewport)
+```css
+height: 100vh; /* 100% de la hauteur visible */
+width: 50vw;   /* 50% de la largeur visible */
+```
+- Relatif à la taille de l'écran
+- Toujours responsive
+
+---
+
+## 15. FONCTIONS CSS
+
+### `calc()`
+```css
+width: calc(100% - 20px);
+```
+- Calculs mathématiques en CSS
+- Peut mélanger les unités
+- Exemple : `calc(100vh - 80px)` = hauteur totale moins le header
+
+---
+
+### `var()`
+```css
+color: var(--primary-color);
+```
+- Utilise une variable CSS
+- Fallback possible : `var(--color, blue)`
+
+---
+
+### `rgba()`
+```css
+background-color: rgba(99, 102, 241, 0.1);
+```
+- Rouge, Vert, Bleu, Alpha (transparence)
+- Alpha : 0 = invisible, 1 = opaque
+- Exemple : `rgba(255, 0, 0, 0.5)` = rouge à 50%
+
+---
+
+##  RÉSUMÉ DES PROPRIÉTÉS CLÉS
+
+| Propriété | Rôle | Exemple |
+|-----------|------|---------|
+| `display` | Type d'affichage | `flex`, `grid`, `block`, `none` |
+| `position` | Positionnement | `static`, `relative`, `absolute`, `fixed` |
+| `width/height` | Dimensions | `100px`, `50%`, `100vh` |
+| `margin` | Espace extérieur | `10px`, `0 auto` |
+| `padding` | Espace intérieur | `1rem 2rem` |
+| `color` | Couleur du texte | `#6366f1`, `var(--color)` |
+| `background` | Fond | `#fff`, `linear-gradient(...)` |
+| `font-size` | Taille du texte | `16px`, `1rem` |
+| `transform` | Transformations | `translateY()`, `scale()`, `rotate()` |
+| `transition` | Animations | `0.3s ease` |
+| `opacity` | Transparence | `0` à `1` |
+| `z-index` | Ordre d'empilement | `1`, `999`, `1000` |
+
+---
+
+##  CONCEPTS AVANCÉS
+
+### Spécificité CSS
+Plus un sélecteur est spécifique, plus il a de priorité :
+
+```css
+/* Spécificité : 1 (élément) */
+p { color: red; }
+
+/* Spécificité : 10 (classe) */
+.text { color: blue; }
+
+/* Spécificité : 100 (ID) */
+#title { color: green; }
+
+/* Spécificité : 1000 (inline) */
+<p style="color: yellow;">
+
+/* Priorité absolue */
+p { color: purple !important; }
+```
+
+---
+
+### Cascade
+L'ordre compte ! Le dernier style écrase les précédents :
+
+```css
+.btn {
+  color: red;
+  color: blue; /* ← Celui-ci gagne */
+}
+```
+
+---
+
+### Héritage
+Certaines propriétés sont héritées des parents :
+
+```css
+body {
+  color: white;
+  font-family: Arial;
+}
+
+/* Tous les textes héritent ces propriétés */
+p { /* color: white hérité */ }
+```
+
+**Propriétés héritées** : color, font-*, line-height, text-*  
+**Non héritées** : margin, padding, border, width, height
+
+---
+
+##  BONNES PRATIQUES CSS
+
+1. **Utiliser des variables** pour les valeurs répétées
+2. **Mobile-first** : commencer par le mobile, ajouter des media queries pour desktop
+3. **BEM naming** : `.block__element--modifier`
+4. **Éviter !important** : signe d'un problème de spécificité
+5. **Grouper les propriétés** : positionnement → box model → visuel → typographie
+6. **Commenter** : expliquer les choix complexes
+7. **Tester** : vérifier sur différents navigateurs et tailles d'écran
+
+---
+
+** Note finale :** Le CSS est la **peau** de mon site(portfolio). Il transforme le HTML brut en une interface belle et utilisable. Maîtrisez Flexbox et Grid pour des mises en page modernes et responsive !
